@@ -1,0 +1,8 @@
+{
+  "permissions": {
+    "allow": [
+      "WebFetch(domain:khonshu-ankh.vercel.app)"
+    ],
+    "deny": []
+  }
+}

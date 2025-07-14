@@ -1,0 +1,253 @@
+import fs from 'fs';
+import path from 'path';
+import { ChampionScraper } from './championScraper';
+import { Champion } from '../types/Champion';
+
+/**
+ * Script to scrape champion data and update the champions.ts file
+ */
+export class ChampionUpdater {
+  private scraper: ChampionScraper;
+  private championsFilePath: string;
+  private backupFilePath: string;
+
+  constructor() {
+    this.scraper = new ChampionScraper();
+    this.championsFilePath = path.join(__dirname, '../data/champions.ts');
+    this.backupFilePath = path.join(__dirname, '../data/champions.backup.ts');
+  }
+
+  /**
+   * Update champions data by scraping from the website
+   */
+  async updateChampionsData(): Promise<void> {
+    try {
+      console.log('🚀 Starting champion data update...');
+      
+      // Create backup of current champions file
+      await this.createBackup();
+      
+      // Scrape new champion data
+      console.log('📥 Scraping champion data...');
+      const scrapedChampions = await this.scraper.scrapeAllChampions();
+      
+      if (scrapedChampions.length === 0) {
+        throw new Error('No champions were scraped successfully');
+      }
+      
+      // Merge with existing champions to preserve any manual additions
+      const mergedChampions = await this.mergeChampionData(scrapedChampions);
+      
+      // Generate new champions.ts file
+      await this.generateChampionsFile(mergedChampions);
+      
+      console.log(`✅ Successfully updated champions.ts with ${mergedChampions.length} champions`);
+      console.log('📋 Summary:');
+      this.printChampionsSummary(mergedChampions);
+      
+    } catch (error) {
+      console.error('❌ Error updating champions data:', error);
+      
+      // Restore backup if it exists
+      if (fs.existsSync(this.backupFilePath)) {
+        console.log('🔄 Restoring backup...');
+        fs.copyFileSync(this.backupFilePath, this.championsFilePath);
+      }
+      
+      throw error;
+    }
+  }
+
+  /**
+   * Create backup of current champions file
+   */
+  private async createBackup(): Promise<void> {
+    if (fs.existsSync(this.championsFilePath)) {
+      console.log('💾 Creating backup of current champions.ts...');
+      fs.copyFileSync(this.championsFilePath, this.backupFilePath);
+    }
+  }
+
+  /**
+   * Merge scraped data with existing champions
+   */
+  private async mergeChampionData(scrapedChampions: Champion[]): Promise<Champion[]> {
+    let existingChampions: Champion[] = [];
+    
+    try {
+      // Try to load existing champions
+      const existingData = await import('../data/champions');
+      existingChampions = existingData.champions || [];
+    } catch (error) {
+      console.log('No existing champions data found, using scraped data only');
+    }
+    
+    // Create a map of existing champions by name for easy lookup
+    const existingChampionsMap = new Map<string, Champion>();
+    existingChampions.forEach(champion => {
+      existingChampionsMap.set(champion.name.toLowerCase(), champion);
+    });
+    
+    // Merge scraped champions with existing ones
+    const mergedChampions: Champion[] = [];
+    let nextId = 1;
+    
+    // Add all scraped champions
+    scrapedChampions.forEach(scrapedChampion => {
+      const existing = existingChampionsMap.get(scrapedChampion.name.toLowerCase());
+      
+      if (existing) {
+        // Use existing champion data but update with scraped info
+        mergedChampions.push({
+          ...existing,
+          image: scrapedChampion.image, // Update image URL
+          description: scrapedChampion.description || existing.description,
+          // Keep existing stats and other manual data
+        });
+      } else {
+        // Add new scraped champion
+        mergedChampions.push({
+          ...scrapedChampion,
+          id: nextId.toString()
+        });
+      }
+      
+      nextId++;
+    });
+    
+    // Add any existing champions that weren't found in scraped data
+    existingChampions.forEach(existing => {
+      const foundInScraped = scrapedChampions.some(
+        scraped => scraped.name.toLowerCase() === existing.name.toLowerCase()
+      );
+      
+      if (!foundInScraped) {
+        mergedChampions.push({
+          ...existing,
+          id: nextId.toString()
+        });
+        nextId++;
+      }
+    });
+    
+    return mergedChampions;
+  }
+
+  /**
+   * Generate the new champions.ts file
+   */
+  private async generateChampionsFile(champions: Champion[]): Promise<void> {
+    const fileContent = this.generateFileContent(champions);
+    
+    console.log('📝 Writing new champions.ts file...');
+    fs.writeFileSync(this.championsFilePath, fileContent, 'utf8');
+  }
+
+  /**
+   * Generate the TypeScript file content
+   */
+  private generateFileContent(champions: Champion[]): string {
+    const championsJson = JSON.stringify(champions, null, 2);
+    
+    return `import { type Champion, ChampionClass } from '../types/Champion';
+
+// This file was auto-generated by the champion scraper
+// Last updated: ${new Date().toISOString()}
+// Total champions: ${champions.length}
+
+export const champions: Champion[] = ${championsJson.replace(/"([A-Z_]+)"/g, 'ChampionClass.$1')};
+`;
+  }
+
+  /**
+   * Print summary of champions data
+   */
+  private printChampionsSummary(champions: Champion[]): void {
+    const classCounts = champions.reduce((acc, champion) => {
+      acc[champion.class] = (acc[champion.class] || 0) + 1;
+      return acc;
+    }, {} as Record<string, number>);
+    
+    console.log('📊 Champions by class:');
+    Object.entries(classCounts).forEach(([championClass, count]) => {
+      console.log(`   ${championClass}: ${count}`);
+    });
+    
+    console.log(`📈 Total champions: ${champions.length}`);
+  }
+
+  /**
+   * Validate scraped data quality
+   */
+  async validateData(champions: Champion[]): Promise<boolean> {
+    console.log('🔍 Validating scraped data...');
+    
+    const errors: string[] = [];
+    
+    champions.forEach((champion, index) => {
+      // Check required fields
+      if (!champion.name || champion.name.trim() === '') {
+        errors.push(`Champion ${index + 1}: Missing name`);
+      }
+      
+      if (!champion.class) {
+        errors.push(`Champion ${champion.name || index + 1}: Missing class`);
+      }
+      
+      if (!champion.stats || Object.keys(champion.stats).length === 0) {
+        errors.push(`Champion ${champion.name}: Missing stats`);
+      }
+      
+      // Check stats validity
+      if (champion.stats) {
+        Object.entries(champion.stats).forEach(([tier, stats]) => {
+          if (stats.health <= 0) {
+            errors.push(`Champion ${champion.name}: Invalid health for tier ${tier}`);
+          }
+          if (stats.attack <= 0) {
+            errors.push(`Champion ${champion.name}: Invalid attack for tier ${tier}`);
+          }
+        });
+      }
+    });
+    
+    if (errors.length > 0) {
+      console.error('❌ Data validation failed:');
+      errors.forEach(error => console.error(`   ${error}`));
+      return false;
+    }
+    
+    console.log('✅ Data validation passed');
+    return true;
+  }
+
+  /**
+   * Restore from backup
+   */
+  async restoreBackup(): Promise<void> {
+    if (fs.existsSync(this.backupFilePath)) {
+      console.log('🔄 Restoring from backup...');
+      fs.copyFileSync(this.backupFilePath, this.championsFilePath);
+      console.log('✅ Backup restored successfully');
+    } else {
+      console.log('❌ No backup file found');
+    }
+  }
+}
+
+// Main execution function
+export async function runChampionUpdate(): Promise<void> {
+  const updater = new ChampionUpdater();
+  
+  try {
+    await updater.updateChampionsData();
+  } catch (error) {
+    console.error('Failed to update champions:', error);
+    process.exit(1);
+  }
+}
+
+// CLI execution
+if (require.main === module) {
+  runChampionUpdate();
+}

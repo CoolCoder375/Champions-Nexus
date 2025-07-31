@@ -515,3 +515,355 @@
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+
+/* Mobile Modal Styles */
+@media (max-width: 768px) {
+  .modal-backdrop {
+    display: none;
+  }
+
+  .mobile-modal-backdrop {
+    position: fixed !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100vw !important;
+    height: 100vh !important;
+    background-color: rgba(0, 0, 0, 0.9);
+    backdrop-filter: blur(10px);
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    z-index: 99999 !important;
+    padding: 10px;
+    margin: 0 !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+  }
+
+  .mobile-modal-container {
+    background-color: white;
+    border-radius: 20px;
+    width: 100%;
+    max-width: 400px;
+    height: 90vh;
+    max-height: 90vh;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+  }
+
+  .mobile-modal-header {
+    display: flex;
+    align-items: center;
+    padding: 15px 20px;
+    border-bottom: 1px solid #eee;
+    background-color: #f8f9fa;
+    border-radius: 20px 20px 0 0;
+  }
+
+  .mobile-close-button {
+    background: none;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+    color: #666;
+    padding: 0;
+    margin-right: 15px;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .mobile-close-button:hover {
+    color: #333;
+  }
+
+  .mobile-modal-title {
+    font-size: 20px;
+    font-weight: bold;
+    color: #333;
+    margin: 0;
+    flex: 1;
+    text-align: center;
+  }
+
+  .mobile-tabs {
+    display: flex;
+    background-color: #f8f9fa;
+    border-bottom: 1px solid #eee;
+  }
+
+  .mobile-tab {
+    flex: 1;
+    padding: 15px 10px;
+    border: none;
+    background: none;
+    cursor: pointer;
+    font-size: 14px;
+    font-weight: 500;
+    color: #666;
+    transition: all 0.3s ease;
+    border-bottom: 3px solid transparent;
+  }
+
+  .mobile-tab.active {
+    color: #4A90E2;
+    border-bottom-color: #4A90E2;
+    background-color: rgba(74, 144, 226, 0.1);
+  }
+
+  .mobile-tab-content {
+    flex: 1;
+    overflow-y: auto;
+    padding: 20px;
+    /* Hide scrollbar */
+    -webkit-scrollbar-width: none;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+
+  .mobile-tab-content::-webkit-scrollbar {
+    display: none;
+  }
+
+  /* Mobile Character Info Tab */
+  .mobile-character-info {
+    text-align: center;
+  }
+
+  .mobile-character-image-container {
+    width: 150px;
+    height: 150px;
+    border-radius: 12px;
+    margin: 0 auto 20px;
+    overflow: hidden;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  }
+
+  .mobile-character-image {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .mobile-character-class-badge {
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 14px;
+    font-weight: bold;
+    display: inline-block;
+    margin-bottom: 20px;
+  }
+
+  .mobile-tier-selector {
+    margin: 20px 0;
+  }
+
+  .mobile-tier-label {
+    display: block;
+    font-size: 14px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 8px;
+  }
+
+  .mobile-tier-select {
+    padding: 10px 15px;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    background-color: white;
+    font-size: 16px;
+    color: #333;
+    cursor: pointer;
+    min-width: 100px;
+  }
+
+  .mobile-character-stats {
+    margin: 20px 0;
+    padding: 15px;
+    background-color: #f8f9fa;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+  }
+
+  .mobile-stats-title {
+    margin: 0 0 15px 0;
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+  }
+
+  .mobile-stats-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .mobile-stat-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px solid #eee;
+  }
+
+  .mobile-stat-item:last-child {
+    border-bottom: none;
+  }
+
+  .mobile-stat-label {
+    font-size: 13px;
+    color: #666;
+    font-weight: 500;
+  }
+
+  .mobile-stat-value {
+    font-size: 13px;
+    color: #333;
+    font-weight: bold;
+  }
+
+  .mobile-character-description {
+    margin: 20px 0 0 0;
+    color: #666;
+    font-size: 14px;
+    line-height: 1.5;
+    text-align: left;
+  }
+
+  /* Mobile Questions Tab */
+  .mobile-questions-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .mobile-question-button {
+    background-color: #f8f9fa;
+    color: #333;
+    border: 1px solid #ddd;
+    border-radius: 10px;
+    padding: 15px;
+    cursor: pointer;
+    text-align: left;
+    font-size: 14px;
+    line-height: 1.4;
+    transition: all 0.2s;
+    font-weight: normal;
+  }
+
+  .mobile-question-button:hover {
+    background-color: #e9ecef;
+  }
+
+  .mobile-question-button.selected {
+    background-color: #4A90E2;
+    color: white;
+    font-weight: bold;
+  }
+
+  /* Mobile Analysis Tab */
+  .mobile-answer-placeholder {
+    text-align: center;
+    color: #666;
+    font-size: 16px;
+    margin-top: 40px;
+    line-height: 1.5;
+  }
+
+  .mobile-answer-loading {
+    text-align: center;
+    padding: 40px 20px;
+  }
+
+  .mobile-loading-spinner {
+    display: inline-block;
+    width: 30px;
+    height: 30px;
+    border: 3px solid #f3f3f3;
+    border-top: 3px solid #4A90E2;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+  }
+
+  .mobile-loading-text {
+    margin: 15px 0 0 0;
+    color: #666;
+  }
+
+  .mobile-answer-error {
+    background-color: #f8d7da;
+    border: 1px solid #f5c6cb;
+    border-radius: 8px;
+    padding: 15px;
+    color: #721c24;
+    font-size: 14px;
+  }
+
+  .mobile-answer-content {
+    background-color: #d4edda;
+    border: 1px solid #c3e6cb;
+    border-radius: 8px;
+    padding: 15px;
+    color: #155724;
+    white-space: pre-wrap;
+    line-height: 1.6;
+    font-size: 14px;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Arial, sans-serif;
+  }
+
+  /* Mobile Class Colors for Images */
+  .mobile-character-image-container.cosmic {
+    border: 4px solid #289bc3;
+  }
+
+  .mobile-character-image-container.tech {
+    border: 4px solid #1c2ad7;
+  }
+
+  .mobile-character-image-container.mutant {
+    border: 4px solid #eeb81c;
+  }
+
+  .mobile-character-image-container.skill {
+    border: 4px solid #e32a2c;
+  }
+
+  .mobile-character-image-container.science {
+    border: 4px solid #289302;
+  }
+
+  .mobile-character-image-container.mystic {
+    border: 4px solid #7922b6;
+  }
+
+  /* Mobile Class Badge Colors */
+  .mobile-character-class-badge.cosmic {
+    background-color: #289bc3;
+  }
+
+  .mobile-character-class-badge.tech {
+    background-color: #1c2ad7;
+  }
+
+  .mobile-character-class-badge.mutant {
+    background-color: #eeb81c;
+  }
+
+  .mobile-character-class-badge.skill {
+    background-color: #e32a2c;
+  }
+
+  .mobile-character-class-badge.science {
+    background-color: #289302;
+  }
+
+  .mobile-character-class-badge.mystic {
+    background-color: #7922b6;
+  }
+}

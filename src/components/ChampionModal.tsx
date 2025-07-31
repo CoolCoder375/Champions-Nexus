@@ -9,14 +9,16 @@ interface ChampionModalProps {
   champion: Champion | null;
   isOpen: boolean;
   onClose: () => void;
+  isMobile?: boolean;
 }
 
-const ChampionModal: React.FC<ChampionModalProps> = ({ champion, isOpen, onClose }) => {
+const ChampionModal: React.FC<ChampionModalProps> = ({ champion, isOpen, onClose, isMobile = false }) => {
   const [selectedQuestion, setSelectedQuestion] = useState<StrategyQuestion | null>(null);
   const [analysis, setAnalysis] = useState<string>('');
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string>('');
   const [selectedTier, setSelectedTier] = useState<number>(7);
+  const [activeTab, setActiveTab] = useState<'info' | 'questions' | 'analysis'>('info');
   // const [isAwakened, setIsAwakened] = useState<boolean>(false);
   // const [signatureLevel, setSignatureLevel] = useState<number>(1);
 
@@ -60,6 +62,10 @@ const ChampionModal: React.FC<ChampionModalProps> = ({ champion, isOpen, onClose
     setError('');
     setAnalysis('');
 
+    if (isMobile) {
+      setActiveTab('analysis');
+    }
+
     try {
       const response = await getChampionAnalysis(champion.name, question.question);
       
@@ -76,6 +82,165 @@ const ChampionModal: React.FC<ChampionModalProps> = ({ champion, isOpen, onClose
   };
 
   if (!isOpen || !champion) return null;
+
+  // Mobile tabbed interface
+  const renderMobileModal = () => {
+    return (
+      <div className="mobile-modal-backdrop" onClick={onClose}>
+        <div className="mobile-modal-container" onClick={(e) => e.stopPropagation()}>
+          <div className="mobile-modal-header">
+            <button onClick={onClose} className="mobile-close-button">
+              ×
+            </button>
+            <h2 className="mobile-modal-title">{champion.name}</h2>
+          </div>
+
+          <div className="mobile-tabs">
+            <button 
+              className={`mobile-tab ${activeTab === 'info' ? 'active' : ''}`}
+              onClick={() => setActiveTab('info')}
+            >
+              Info
+            </button>
+            <button 
+              className={`mobile-tab ${activeTab === 'questions' ? 'active' : ''}`}
+              onClick={() => setActiveTab('questions')}
+            >
+              Questions
+            </button>
+            <button 
+              className={`mobile-tab ${activeTab === 'analysis' ? 'active' : ''}`}
+              onClick={() => setActiveTab('analysis')}
+            >
+              Analysis
+            </button>
+          </div>
+
+          <div className="mobile-tab-content">
+            {activeTab === 'info' && (
+              <div className="mobile-character-info">
+                <div className={`mobile-character-image-container ${getClassCSS(champion.class)}`}>
+                  <img 
+                    src={champion.featured_image} 
+                    alt={champion.name}
+                    className="mobile-character-image"
+                  />
+                </div>
+
+                <div className={`mobile-character-class-badge ${getClassCSS(champion.class)}`}>
+                  {champion.class}
+                </div>
+
+                <div className="mobile-tier-selector">
+                  <label className="mobile-tier-label">Tier:</label>
+                  <select 
+                    value={selectedTier} 
+                    onChange={(e) => setSelectedTier(Number(e.target.value))}
+                    className="mobile-tier-select"
+                  >
+                    {champion.availableTiers.map(tier => (
+                      <option key={tier} value={tier}>{tier}★</option>
+                    ))}
+                  </select>
+                </div>
+
+                <div className="mobile-character-stats">
+                  <h4 className="mobile-stats-title">Base Stats</h4>
+                  {champion.stats[selectedTier] && (
+                    <div className="mobile-stats-grid">
+                      <div className="mobile-stat-item">
+                        <span className="mobile-stat-label">Health:</span>
+                        <span className="mobile-stat-value">{champion.stats[selectedTier].health.toLocaleString()}</span>
+                      </div>
+                      <div className="mobile-stat-item">
+                        <span className="mobile-stat-label">Attack:</span>
+                        <span className="mobile-stat-value">{champion.stats[selectedTier].attack.toLocaleString()}</span>
+                      </div>
+                      <div className="mobile-stat-item">
+                        <span className="mobile-stat-label">Defense:</span>
+                        <span className="mobile-stat-value">{champion.stats[selectedTier].defense.toLocaleString()}</span>
+                      </div>
+                      <div className="mobile-stat-item">
+                        <span className="mobile-stat-label">Crit Rating:</span>
+                        <span className="mobile-stat-value">{champion.stats[selectedTier].criticalRating.toLocaleString()}</span>
+                      </div>
+                      <div className="mobile-stat-item">
+                        <span className="mobile-stat-label">Crit Damage:</span>
+                        <span className="mobile-stat-value">{champion.stats[selectedTier].criticalDamageRating.toLocaleString()}</span>
+                      </div>
+                      <div className="mobile-stat-item">
+                        <span className="mobile-stat-label">Armor:</span>
+                        <span className="mobile-stat-value">{champion.stats[selectedTier].armor.toLocaleString()}</span>
+                      </div>
+                      <div className="mobile-stat-item">
+                        <span className="mobile-stat-label">Block Prof:</span>
+                        <span className="mobile-stat-value">{champion.stats[selectedTier].blockProficiency.toLocaleString()}</span>
+                      </div>
+                    </div>
+                  )}
+                </div>
+
+                <p className="mobile-character-description">
+                  {champion.description}
+                </p>
+              </div>
+            )}
+
+            {activeTab === 'questions' && (
+              <div className="mobile-questions">
+                <div className="mobile-questions-container">
+                  {strategyQuestions.map((question) => (
+                    <button
+                      key={question.id}
+                      onClick={() => handleQuestionSelect(question)}
+                      className={`mobile-question-button ${selectedQuestion?.id === question.id ? 'selected' : ''}`}
+                    >
+                      {question.question}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
+            {activeTab === 'analysis' && (
+              <div className="mobile-answer">
+                {!selectedQuestion && (
+                  <div className="mobile-answer-placeholder">
+                    Go to Questions tab and select a question to get AI-powered analysis
+                  </div>
+                )}
+
+                {loading && (
+                  <div className="mobile-answer-loading">
+                    <div className="mobile-loading-spinner"></div>
+                    <p className="mobile-loading-text">
+                      Getting analysis from Gemini...
+                    </p>
+                  </div>
+                )}
+
+                {error && (
+                  <div className="mobile-answer-error">
+                    <strong>Error:</strong> {error}
+                  </div>
+                )}
+
+                {analysis && !loading && (
+                  <div className="mobile-answer-content">
+                    {analysis}
+                  </div>
+                )}
+              </div>
+            )}
+          </div>
+        </div>
+      </div>
+    );
+  };
+
+  if (isMobile) {
+    return createPortal(renderMobileModal(), document.body);
+  }
 
   return createPortal(
     <div className="modal-backdrop" onClick={onClose}>

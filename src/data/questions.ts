@@ -48,7 +48,7 @@ export const strategyQuestions: StrategyQuestion[] = [
   },
   {
     id:'10',
-    question: 'what is the name of this champion',
+    question: 'Please tell me more about this character',
     category:'general'
   }
 ];

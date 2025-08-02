@@ -48,11 +48,26 @@
 .class-header {
   width: 100%;
   padding: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
   border-radius: 12px;
   margin-bottom: 15px;
   text-align: center;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
   border: 2px solid rgba(255, 255, 255, 0.2);
+}
+
+.class-header-icon {
+  width: 24px;
+  height: 24px;
+  filter: brightness(0) invert(1); /* Make icons white */
+}
+
+.class-icon {
+  width: 20px;
+  height: 20px;
 }
 
 .class-title {
@@ -75,27 +90,33 @@
 
 /* Class Header Colors */
 .class-header.cosmic {
-  background-color: #289bc3;
+  border: 1px solid #289bc3;
+  background: transparent;
 }
 
 .class-header.tech {
-  background-color: #1c2ad7;
+  border: 1px solid #1c2ad7;
+    background: transparent;
 }
 
 .class-header.mutant {
-  background-color: #eeb81c;
+  border:1px solid #eeb81c;
+    background: transparent;
 }
 
 .class-header.skill {
-  background-color: #e32a2c;
+  border: 1px solid #e32a2c;
+    background: transparent;
 }
 
 .class-header.science {
-  background-color: #289302;
+  border: 1px solid #289302;
+    background: transparent;
 }
 
 .class-header.mystic {
-  background-color: #7922b6;
+  border: 1px solid #7922b6;
+    background: transparent;
 }
 
 .champion-card {
@@ -191,7 +212,7 @@
   /* Left Sidebar - Permanent */
   .mobile-sidebar {
     width: fit-content;
-    min-width: fit-content;
+    min-width: 4rem;
     background-color: transparent;
     border-right: 2px solid rgba(255, 255, 255, 0.1);
     padding: 15px 8px;
@@ -269,27 +290,34 @@
 
   /* Class Button Colors */
   .class-button.cosmic {
-    background-color: #289bc3;
+    border: 1px solid #289bc3;
+    background: transparent;
   }
 
   .class-button.tech {
-    background-color: #1c2ad7;
+    border: 1px solid #1c2ad7;
+    background: transparent;
   }
 
   .class-button.mutant {
-    background-color: #eeb81c;
+    border:1px solid #eeb81c;
+    background: transparent;
   }
 
   .class-button.skill {
-    background-color: #e32a2c;
+    border: 1px solid #e32a2c;
+    background: transparent;
   }
 
   .class-button.science {
-    background-color: #289302;
+    border: 1px solid #289302;
+    background: transparent;
   }
 
   .class-button.mystic {
-    background-color: #7922b6;
+    border: 1px solid #7922b6;
+    background: transparent;
+
   }
 
   /* Right Content Area */
@@ -433,8 +461,8 @@
   }
 
   .mobile-champion-image {
-    width: 90px;
-    height: 90px;
+    width: 100px;
+    height: 100px;
     border-radius: 12px;
     object-fit: cover;
     border: 2px solid rgba(255, 255, 255, 0.4);

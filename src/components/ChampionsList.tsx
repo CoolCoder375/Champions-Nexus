@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { champions } from '../data/champions.expanded';
-import { type Champion, ChampionClass } from '../types/Champion';
+import { type Champion, ChampionClass, ChampionClassConfig } from '../types/Champion';
 import ChampionModal from './ChampionModal';
 import '/src/css/ChampionsList.css';
 
@@ -23,7 +23,7 @@ const ChampionsList: React.FC = () => {
   }, []);
 
   const getClassCSS = (championClass: ChampionClass): string => {
-    return championClass.toLowerCase();
+    return ChampionClassConfig[championClass].cssClass;
   };
 
   const handleChampionClick = (champion: Champion) => {
@@ -65,9 +65,6 @@ const ChampionsList: React.FC = () => {
       <div className="mobile-layout">
         {/* Left Sidebar - Always Visible */}
         <div className="mobile-sidebar">
-          <div className="sidebar-title">
-            <h3>Classes</h3>
-          </div>
           <div className="sidebar-classes-list">
             {classOrder.map((championClass) => (
               <button
@@ -75,7 +72,11 @@ const ChampionsList: React.FC = () => {
                 onClick={() => handleClassSelect(championClass)}
                 className={`class-button ${getClassCSS(championClass)} ${selectedClass === championClass ? 'active' : ''}`}
               >
-                <span className="class-name">{championClass}</span>
+                <img 
+                  src={ChampionClassConfig[championClass].svgPath} 
+                  alt={championClass}
+                  className="class-icon"
+                />
               </button>
             ))}
           </div>

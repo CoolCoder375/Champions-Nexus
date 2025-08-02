@@ -19,6 +19,8 @@ const ChampionModal: React.FC<ChampionModalProps> = ({ champion, isOpen, onClose
   const [error, setError] = useState<string>('');
   const [selectedTier, setSelectedTier] = useState<number>(7);
   const [activeTab, setActiveTab] = useState<'info' | 'questions' | 'analysis'>('info');
+  const [touchStart, setTouchStart] = useState<number>(0);
+  const [touchEnd, setTouchEnd] = useState<number>(0);
   // const [isAwakened, setIsAwakened] = useState<boolean>(false);
   // const [signatureLevel, setSignatureLevel] = useState<number>(1);
 
@@ -46,19 +48,66 @@ const ChampionModal: React.FC<ChampionModalProps> = ({ champion, isOpen, onClose
       }
     };
 
+    // Handle mobile back button
+    const handlePopState = () => {
+      if (isOpen) {
+        onClose();
+        // Prevent the default back navigation
+        window.history.pushState(null, '', window.location.href);
+      }
+    };
+
     if (isOpen) {
       document.addEventListener('keydown', handleEscape);
       document.body.style.overflow = 'hidden';
+      
+      // Add history entry when modal opens
+      window.history.pushState(null, '', window.location.href);
+      window.addEventListener('popstate', handlePopState);
     }
 
     return () => {
       document.removeEventListener('keydown', handleEscape);
+      window.removeEventListener('popstate', handlePopState);
       document.body.style.overflow = 'unset';
     };
   }, [isOpen, onClose]);
 
   const getClassCSS = (championClass: ChampionClass): string => {
     return championClass.toLowerCase();
+  };
+
+  // Swipe gesture handling for mobile tab navigation
+  const handleTouchStart = (e: React.TouchEvent) => {
+    setTouchStart(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchMove = (e: React.TouchEvent) => {
+    setTouchEnd(e.targetTouches[0].clientX);
+  };
+
+  const handleTouchEnd = () => {
+    if (!touchStart || !touchEnd) return;
+    
+    const distance = touchStart - touchEnd;
+    const minSwipeDistance = 50;
+
+    const tabs: Array<'info' | 'questions' | 'analysis'> = ['info', 'questions', 'analysis'];
+    const currentIndex = tabs.indexOf(activeTab);
+
+    // Left swipe (next tab)
+    if (distance > minSwipeDistance && currentIndex < tabs.length - 1) {
+      setActiveTab(tabs[currentIndex + 1]);
+    }
+
+    // Right swipe (previous tab)
+    if (distance < -minSwipeDistance && currentIndex > 0) {
+      setActiveTab(tabs[currentIndex - 1]);
+    }
+
+    // Reset touch states
+    setTouchStart(0);
+    setTouchEnd(0);
   };
 
   const handleQuestionSelect = async (question: StrategyQuestion) => {
@@ -94,7 +143,13 @@ const ChampionModal: React.FC<ChampionModalProps> = ({ champion, isOpen, onClose
   const renderMobileModal = () => {
     return (
       <div className="mobile-modal-backdrop" onClick={onClose}>
-        <div className="mobile-modal-container" onClick={(e) => e.stopPropagation()}>
+        <div 
+          className="mobile-modal-container" 
+          onClick={(e) => e.stopPropagation()}
+          onTouchStart={handleTouchStart}
+          onTouchMove={handleTouchMove}
+          onTouchEnd={handleTouchEnd}
+        >
           <div className="mobile-modal-header">
             <button onClick={onClose} className="mobile-close-button">
               ×

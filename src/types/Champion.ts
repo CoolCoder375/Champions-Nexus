@@ -39,32 +39,32 @@ export type ChampionClass = typeof ChampionClass[keyof typeof ChampionClass];
 export const ChampionClassConfig = {
   [ChampionClass.COSMIC]: {
     name: 'Cosmic',
-    svgPath: '/src/images/class_svgs/Cosmic.svg',
+    svgPath: '/images/class_svgs/Cosmic.svg',
     cssClass: 'cosmic'
   },
   [ChampionClass.TECH]: {
     name: 'Tech',
-    svgPath: '/src/images/class_svgs/Tech.svg',
+    svgPath: '/images/class_svgs/Tech.svg',
     cssClass: 'tech'
   },
   [ChampionClass.MUTANT]: {
     name: 'Mutant',
-    svgPath: '/src/images/class_svgs/Mutant.svg',
+    svgPath: '/images/class_svgs/Mutant.svg',
     cssClass: 'mutant'
   },
   [ChampionClass.SKILL]: {
     name: 'Skill',
-    svgPath: '/src/images/class_svgs/Skill.svg',
+    svgPath: '/images/class_svgs/Skill.svg',
     cssClass: 'skill'
   },
   [ChampionClass.SCIENCE]: {
     name: 'Science',
-    svgPath: '/src/images/class_svgs/Science.svg',
+    svgPath: '/images/class_svgs/Science.svg',
     cssClass: 'science'
   },
   [ChampionClass.MYSTIC]: {
     name: 'Mystic',
-    svgPath: '/src/images/class_svgs/Mystic.svg',
+    svgPath: '/images/class_svgs/Mystic.svg',
     cssClass: 'mystic'
   }
 } as const;

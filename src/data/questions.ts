@@ -28,27 +28,17 @@ export const strategyQuestions: StrategyQuestion[] = [
   },
   {
     id: '6',
-    question: 'What is the best strategy for using this champion in Alliance War or in Alliance Quest?',
-    category: 'general'
-  },
-  {
-    id: '7',
     question: 'What masteries work best with this champion?',
     category: 'general'
   },
   {
-    id: '8',
+    id: '7',
     question: 'What are the best synergy teams for this champion?',
     category: 'general'
   },
   {
-    id:'9',
-    question: 'Give me all Synergy Bonuses for this champion and suggest best Synergy chmapions',
-    category:'general'
-  },
-  {
-    id:'10',
-    question: 'Please tell me more about this character',
+    id:'8',
+    question: 'What is the Class of this champion and what is counter of him and what this champion could counter',
     category:'general'
   }
 ];

@@ -48,7 +48,7 @@ const ChampionDetail: React.FC = () => {
     setAnalysis('');
 
     try {
-      const response = await getChampionAnalysis(champion.name, question.question);
+      const response = await getChampionAnalysis(champion.name, question.question, champion.class);
       
       if (response.error) {
         setError(response.error);

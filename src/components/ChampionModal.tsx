@@ -27,6 +27,13 @@ const ChampionModal: React.FC<ChampionModalProps> = ({ champion, isOpen, onClose
       // Set default tier to the highest available tier
       const highestTier = Math.max(...champion.availableTiers);
       setSelectedTier(highestTier);
+      // Reset question and analysis state for new champion
+      setSelectedQuestion(null);
+      setAnalysis('');
+      setError('');
+      setLoading(false);
+      // Reset to info tab on mobile
+      setActiveTab('info');
       // setIsAwakened(false);
       // setSignatureLevel(1);
     }
@@ -67,7 +74,7 @@ const ChampionModal: React.FC<ChampionModalProps> = ({ champion, isOpen, onClose
     }
 
     try {
-      const response = await getChampionAnalysis(champion.name, question.question);
+      const response = await getChampionAnalysis(champion.name, question.question, champion.class);
       
       if (response.error) {
         setError(response.error);
